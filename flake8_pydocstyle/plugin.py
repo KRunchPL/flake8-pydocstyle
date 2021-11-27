@@ -6,7 +6,7 @@ import ast
 import os
 import re
 from collections.abc import Generator
-from typing import Optional
+from typing import List, Optional
 
 from pydocstyle import check
 from pydocstyle.config import ConfigurationParser, IllegalConfiguration
@@ -14,8 +14,8 @@ from pydocstyle.config import ConfigurationParser, IllegalConfiguration
 from flake8_pydocstyle.metadata import pydocstyle_version, version
 
 
-CheckCodesType = list[str]
-IgnoreDecoratorsType = list[re.Pattern[str]]
+CheckCodesType = List[str]
+IgnoreDecoratorsType = List[re.Pattern[str]]
 
 
 class _FakeConfigurationParser(ConfigurationParser):  # type: ignore
@@ -65,7 +65,7 @@ class Flake8PydocstylePlugin:
     name = 'flake8-docstrings'
     version = f'{version}, pydocstyle: {pydocstyle_version}'
 
-    def __init__(self, tree: ast.Module, filename: str, lines: list[str]) -> None:
+    def __init__(self, tree: ast.Module, filename: str, lines: List[str]) -> None:
         self.filename = os.path.abspath(filename)
 
     def run(self) -> Generator[tuple[int, int, str, type], None, None]:

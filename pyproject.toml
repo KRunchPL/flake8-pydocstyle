@@ -25,10 +25,15 @@ flake8-todo = "^0.7"
 mypy = "^0.910"
 pytest = "^6.2.5"
 pytest-cov = "^3.0.0"
+pytest-mock = "^3.6.1"
+munch = "^2.5.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.plugins."flake8.extension"]
+D = "flake8_pydocstyle:Flake8PydocstylePlugin"
 
 [tool.pytest.ini_options]
 testpaths = [
@@ -66,7 +71,7 @@ check_untyped_defs = true
 disallow_untyped_decorators = true
 no_implicit_optional = true
 warn_redundant_casts = true
-warn_unused_ignores = true
+warn_unused_ignores = false  # overridden from strict, because https://github.com/python/mypy/issues/8823
 warn_return_any = true
 no_implicit_reexport = true
 strict_equality = true
@@ -74,6 +79,21 @@ strict_equality = true
 disallow_untyped_globals = true
 warn_no_return = true
 warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = [
+    "pydocstyle.*"
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "tests.*"
+]
+strict_optional = false
+allow_untyped_defs = true
+allow_incomplete_defs = true
+check_untyped_defs = false
 
 [tool.pydocstyle]
 ### Ignoring explanation

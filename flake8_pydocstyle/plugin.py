@@ -5,13 +5,22 @@ Contains a code for a plugin that runs pydocstyle for the flake8.
 import ast
 import os
 import re
+import sys
 from collections.abc import Generator
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from pydocstyle import check
 from pydocstyle.config import ConfigurationParser, IllegalConfiguration
 
 from flake8_pydocstyle.metadata import pydocstyle_version, version
+
+
+if sys.version_info >= (3, 9):  # pragma: no cover (PY39+)
+    from re import Pattern
+elif sys.version_info >= (3, 8):  # pragma: no cover (PY38+)
+    from typing import Pattern
+else:  # pragma: no cover (<PY38)
+    from typing.re import Pattern  # noqa
 
 
 CheckCodesType = List[str]
@@ -43,7 +52,7 @@ class _FakeConfigurationParser(ConfigurationParser):  # type: ignore
         config = self._create_check_config(self._options, use_defaults=False)
         self._override_by_cli = config
 
-    def get_files_options(self) -> dict[str, tuple[CheckCodesType, Optional[IgnoreDecoratorsType]]]:
+    def get_files_options(self) -> Dict[str, Tuple[CheckCodesType, Optional[IgnoreDecoratorsType]]]:
         self.parse()
         return {
             os.path.abspath(filename): options
@@ -68,7 +77,7 @@ class Flake8PydocstylePlugin:
     def __init__(self, tree: ast.Module, filename: str, lines: List[str]) -> None:
         self.filename = os.path.abspath(filename)
 
-    def run(self) -> Generator[tuple[int, int, str, type], None, None]:
+    def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
         """
         Search for errors in the file and yield them one by one.
 

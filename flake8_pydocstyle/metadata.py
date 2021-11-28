@@ -6,12 +6,13 @@ import sys
 import pydocstyle
 
 
+name = 'flake8-pydocstyle'
 if sys.version_info >= (3, 8):  # pragma: no cover (PY38+)
-    import importlib.metadata as importlib_metadata
+    import importlib.metadata
+    version = importlib.metadata.version(name)
 else:  # pragma: no cover (<PY38)
     import importlib_metadata
+    version = importlib_metadata.version(name)  # type: ignore
 
 
-name = 'flake8-pydocstyle'
-version = importlib_metadata.version(name)
 pydocstyle_version = pydocstyle.__version__

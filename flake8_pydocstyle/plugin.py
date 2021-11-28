@@ -21,7 +21,7 @@ elif sys.version_info >= (3, 8):  # pragma: no cover (PY38+)
     from typing import Dict, Generator, List, Pattern, Tuple
 else:  # pragma: no cover (<PY38)
     from typing import Dict, Generator, List, Tuple
-    from typing.re import Pattern
+    from typing.re import Pattern  # type: ignore
 
 
 CheckCodesType = List[str]

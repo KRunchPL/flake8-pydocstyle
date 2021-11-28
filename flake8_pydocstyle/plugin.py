@@ -5,8 +5,7 @@ Contains a code for a plugin that runs pydocstyle for the flake8.
 import ast
 import os
 import sys
-from collections.abc import Generator
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 
 from pydocstyle import check
 from pydocstyle.config import ConfigurationParser, IllegalConfiguration
@@ -15,11 +14,14 @@ from flake8_pydocstyle.metadata import pydocstyle_version, version
 
 
 if sys.version_info >= (3, 9):  # pragma: no cover (PY39+)
+    from builtins import dict as Dict, list as List, tuple as Tuple
+    from collections.abc import Generator
     from re import Pattern
 elif sys.version_info >= (3, 8):  # pragma: no cover (PY38+)
-    from typing import Pattern
+    from typing import Dict, Generator, List, Pattern, Tuple
 else:  # pragma: no cover (<PY38)
-    from typing.re import Pattern  # noqa
+    from typing import Dict, Generator, List, Tuple
+    from typing.re import Pattern
 
 
 CheckCodesType = List[str]

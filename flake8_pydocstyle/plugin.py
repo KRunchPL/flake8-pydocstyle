@@ -4,7 +4,6 @@ Contains a code for a plugin that runs pydocstyle for the flake8.
 
 import ast
 import os
-import re
 import sys
 from collections.abc import Generator
 from typing import Dict, List, Optional, Tuple
@@ -24,7 +23,7 @@ else:  # pragma: no cover (<PY38)
 
 
 CheckCodesType = List[str]
-IgnoreDecoratorsType = List[re.Pattern[str]]
+IgnoreDecoratorsType = List[Pattern[str]]
 
 
 class _FakeConfigurationParser(ConfigurationParser):  # type: ignore

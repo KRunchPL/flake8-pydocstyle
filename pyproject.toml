@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flake8-pydocstyle"
-version = "0.0.0"
+version = "0.1.0"
 description = "flake8 plugin that integrates pydocstyle"
 authors = ["KRunchPL <krunchfrompoland@gmail.com>"]
 readme = "README.md"

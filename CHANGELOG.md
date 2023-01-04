@@ -1,3 +1,11 @@
+0.2.1 - 2022-01-04
+===================
+
+Bugfix release.
+
+Fixes [ValueError bug](https://github.com/KRunchPL/flake8-pydocstyle/issues/3), that occurs with `pydocstyle` version (^6.2).
+
+
 0.2.0 - 2021-11-28
 ===================
 

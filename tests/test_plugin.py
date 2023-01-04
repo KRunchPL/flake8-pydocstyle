@@ -13,7 +13,13 @@ from flake8_pydocstyle.plugin import IllegalConfiguration, _ConfigurationParserI
 def mocked_check(mocker: MockerFixture) -> MagicMock:
     mocker.patch(
         'flake8_pydocstyle.plugin._files_options',
-        {os.path.abspath('checked_file'): ('codes', 'decorators')},
+        {
+            os.path.abspath('checked_file'): (
+                'codes',
+                'ignore_decorators',
+                'property_decorators',
+            )
+        },
     )
     return mocker.patch('flake8_pydocstyle.plugin.check')
 
@@ -35,7 +41,7 @@ def test_run_with_checked_file(mocked_check: MagicMock):
     mocked_check.assert_called_once_with(
         filenames=(plugin.filename,),
         select='codes',
-        ignore_decorators='decorators',
+        ignore_decorators='ignore_decorators',
     )
 
 

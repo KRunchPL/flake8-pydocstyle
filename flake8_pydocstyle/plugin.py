@@ -4,7 +4,7 @@ Contains a code for a plugin that runs pydocstyle for the flake8.
 
 import ast
 import os
-from typing import Optional
+from typing import Optional, Set
 
 from pydocstyle import check
 from pydocstyle.config import ConfigurationParser, IllegalConfiguration
@@ -15,6 +15,7 @@ from flake8_pydocstyle.metadata import pydocstyle_version, version
 
 CheckCodesType = List[str]
 IgnoreDecoratorsType = List[Pattern[str]]
+PropertyDecoratorsType = Set[str]
 
 
 class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore
@@ -42,7 +43,16 @@ class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore
         config = self._create_check_config(self._options, use_defaults=False)
         self._override_by_cli = config
 
-    def get_files_options(self) -> Dict[str, Tuple[CheckCodesType, Optional[IgnoreDecoratorsType]]]:
+    def get_files_options(
+        self,
+    ) -> Dict[
+        str,
+        Tuple[
+            CheckCodesType,
+            Optional[IgnoreDecoratorsType],
+            Optional[PropertyDecoratorsType],
+        ],
+    ]:
         self.parse()
         return {
             os.path.abspath(filename): options
@@ -75,7 +85,7 @@ class Flake8PydocstylePlugin:
         """
         if self.filename not in _files_options:
             return
-        checked_codes, ignore_decorators = _files_options[self.filename]
+        checked_codes, ignore_decorators, _ = _files_options[self.filename]
 
         for error in check(
             filenames=(self.filename,),

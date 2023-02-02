@@ -1,10 +1,9 @@
 """
 Contains a code for a plugin that runs pydocstyle for the flake8.
 """
-
 import ast
 import os
-from typing import Optional, Set
+from typing import Optional, Set, cast
 
 from pydocstyle import check
 from pydocstyle.config import ConfigurationParser, IllegalConfiguration
@@ -16,6 +15,7 @@ from flake8_pydocstyle.metadata import pydocstyle_version, version
 CheckCodesType = List[str]
 IgnoreDecoratorsType = List[Pattern[str]]
 PropertyDecoratorsType = Set[str]
+IgnoreSelfOnlyInitType = bool
 
 
 class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore
@@ -51,13 +51,25 @@ class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore
             CheckCodesType,
             Optional[IgnoreDecoratorsType],
             Optional[PropertyDecoratorsType],
+            IgnoreSelfOnlyInitType,
         ],
     ]:
         self.parse()
-        return {
-            os.path.abspath(filename): options
-            for filename, *options in self.get_files_to_check()
-        }
+        files_options = {}
+        for filename, *options in self.get_files_to_check():
+            if len(options) != 4:
+                raise ValueError(
+                    f'`ConfigurationParser.get_files_to_check` yielded {len(options)} for file "{filename}". '
+                    f'Expected number of options is: 4. It might be a result of changes in pydocstyle. '
+                    f'Try downgrading pydocstyle and report an issue in flake8-pydocstyle repo.'
+                )
+            files_options[str(os.path.abspath(filename))] = (
+                cast(CheckCodesType, options[0]),
+                cast(Optional[IgnoreDecoratorsType], options[1]),
+                cast(Optional[PropertyDecoratorsType], options[2]),
+                cast(IgnoreSelfOnlyInitType, options[3]),
+            )
+        return files_options
 
 
 _files_options = _ConfigurationParserIgnoringSysArgv().get_files_options()
@@ -85,11 +97,18 @@ class Flake8PydocstylePlugin:
         """
         if self.filename not in _files_options:
             return
-        checked_codes, ignore_decorators, _ = _files_options[self.filename]
+        (
+            checked_codes,
+            ignore_decorators,
+            property_decorators,
+            ignore_self_only_init,
+        ) = _files_options[self.filename]
 
         for error in check(
             filenames=(self.filename,),
             select=checked_codes,
             ignore_decorators=ignore_decorators,
+            property_decorators=property_decorators,
+            ignore_self_only_init=ignore_self_only_init,
         ):
             yield (error.line, 0, f'{error.code} {error.short_desc}', Flake8PydocstylePlugin)

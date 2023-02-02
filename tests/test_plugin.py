@@ -18,6 +18,7 @@ def mocked_check(mocker: MockerFixture) -> MagicMock:
                 'codes',
                 'ignore_decorators',
                 'property_decorators',
+                'ignore_self_only_init',
             )
         },
     )
@@ -42,6 +43,8 @@ def test_run_with_checked_file(mocked_check: MagicMock):
         filenames=(plugin.filename,),
         select='codes',
         ignore_decorators='ignore_decorators',
+        property_decorators='property_decorators',
+        ignore_self_only_init='ignore_self_only_init',
     )
 
 
@@ -73,22 +76,31 @@ def test_configuration_parser_raises_on_wrong_config(mocker: MockerFixture):
 def test_get_files_options_return_absolute_paths(mocker: MockerFixture):
     parser = _ConfigurationParserIgnoringSysArgv()
     mocker.patch.object(parser, 'get_files_to_check', return_value=[
-        ('file_name_1', [], None),
-        ('file_name_2', [], None),
+        ('file_name_1', [], None, None, False),
+        ('file_name_2', [], None, None, False),
     ])
     assert parser.get_files_options() == {  # type: ignore
-        os.path.abspath('file_name_1'): [[], None],
-        os.path.abspath('file_name_2'): [[], None],
+        os.path.abspath('file_name_1'): ([], None, None, False),
+        os.path.abspath('file_name_2'): ([], None, None, False),
     }
 
 
 def test_get_files_options_return_correct_options(mocker: MockerFixture):
     parser = _ConfigurationParserIgnoringSysArgv()
     mocker.patch.object(parser, 'get_files_to_check', return_value=[
-        ('file_name_1', ['option_1'], ['decorators_1']),
-        ('file_name_2', ['option_2'], ['decorators_2']),
+        ('file_name_1', ['option_1'], ['decorators_1'], {'properties_1'}, False),
+        ('file_name_2', ['option_2'], ['decorators_2'], {'properties_2'}, True),
     ])
     assert parser.get_files_options() == {  # type: ignore
-        os.path.abspath('file_name_1'): [['option_1'], ['decorators_1']],
-        os.path.abspath('file_name_2'): [['option_2'], ['decorators_2']],
+        os.path.abspath('file_name_1'): (['option_1'], ['decorators_1'], {'properties_1'}, False),
+        os.path.abspath('file_name_2'): (['option_2'], ['decorators_2'], {'properties_2'}, True),
     }
+
+
+def test_get_files_options_raises_on_too_many_options(mocker: MockerFixture):
+    parser = _ConfigurationParserIgnoringSysArgv()
+    mocker.patch.object(parser, 'get_files_to_check', return_value=[
+        ('file_name_1', ['option_1'], ['decorators_1'], {'properties_1'}, False, 'TOO_MUCH'),
+    ])
+    with pytest.raises(ValueError):
+        parser.get_files_options()

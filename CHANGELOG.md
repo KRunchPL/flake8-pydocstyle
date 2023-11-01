@@ -1,3 +1,12 @@
+0.2.3 - 2023-11-01
+===================
+
+Tag release.
+
+Tagging project as compatible with Python 3.12.
+Setting minimal Python version to 3.8.1.
+
+
 0.2.2 - 2022-02-02
 ===================
 

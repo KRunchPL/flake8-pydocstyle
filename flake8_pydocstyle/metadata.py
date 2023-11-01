@@ -13,8 +13,8 @@ else:  # pragma: no cover (<PY38)
 
 
 def _get_versions() -> Tuple[str, str]:
-    version = importlib_metadata.version('flake8-pydocstyle')  # type: ignore
-    pydocstyle_version = importlib_metadata.version('pydocstyle')  # type: ignore
+    version = importlib_metadata.version('flake8-pydocstyle')
+    pydocstyle_version = importlib_metadata.version('pydocstyle')
     return version, pydocstyle_version
 
 

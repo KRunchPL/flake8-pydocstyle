@@ -13,20 +13,21 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-pydocstyle = "^6.3"
+python = "^3.8.1"
+pydocstyle = "^6.3.0"
 
 [tool.poetry.group.dev.dependencies]
 darglint = "^1.8.1"
-flake8 = "^5.0.4"
+flake8 = "^6.1.0"
 flake8-html = "^0.4.3"
-flake8-isort = "^6.0.0"
+flake8-isort = "^6.1.0"
 flake8-todo = "^0.7"
-mypy = "^0.991"
-pytest = "^7.2.0"
-pytest-cov = "^4.0.0"
-pytest-mock = "^3.10.0"
-munch = "^2.5.0"
+mypy = "^1.6.1"
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+munch = "^4.0.0"
+munch-stubs = "^0.1.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -37,9 +38,18 @@ D = "flake8_pydocstyle:Flake8PydocstylePlugin"
 
 [tool.pytest.ini_options]
 testpaths = [
-    "tests"
+    "tests",
 ]
-addopts = "--cov flake8_pydocstyle --cov-report html:coverage-report --cov-config=setup.cfg"
+addopts = """
+--cov flake8_pydocstyle \
+--cov-config=setup.cfg \
+--cov-report html:coverage-report \
+--cov-report term:skip-covered \
+--cov-fail-under=99 \
+--no-cov-on-fail \
+-Werror -Wignore::ImportWarning \
+--strict-markers \
+"""
 
 [tool.isort]
 virtual_env = ".venv"
@@ -55,11 +65,24 @@ line_length = 110
 force_grid_wrap = 0
 ensure_newline_before_comments = true
 combine_as_imports = true
+order_by_type = false
 
 [tool.mypy]
 files = "."
-exclude = "(^|/)tests/"
-# Strict options
+# Categories below are based on mypy==1.6.1
+# Default values
+disallow_any_unimported = false
+disallow_any_expr = false
+disallow_any_decorated = false
+disallow_any_explicit = false
+implicit_optional = false
+strict_optional = true
+warn_no_return = true
+ignore_errors = false
+allow_untyped_globals = false
+allow_redefinition = false
+local_partial_types = false
+# Strict overwrites
 strict = true
 warn_unused_configs = true
 disallow_any_generics = true
@@ -69,16 +92,15 @@ disallow_untyped_defs = true
 disallow_incomplete_defs = true
 check_untyped_defs = true
 disallow_untyped_decorators = true
-no_implicit_optional = true
 warn_redundant_casts = true
-warn_unused_ignores = false  # overridden from strict, because https://github.com/python/mypy/issues/8823
+warn_unused_ignores = true
 warn_return_any = true
-no_implicit_reexport = true
+implicit_reexport = false
 strict_equality = true
-# Additional options
-disallow_untyped_globals = true
-warn_no_return = true
+extra_checks = true
+# Additional overwrites
 warn_unreachable = true
+strict_concatenate = true
 
 [[tool.mypy.overrides]]
 module = [
@@ -88,12 +110,17 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = [
-    "tests.*"
+    "tests.*",
 ]
-strict_optional = false
-allow_untyped_defs = true
-allow_incomplete_defs = true
-check_untyped_defs = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[[tool.mypy.overrides]]
+module = [
+    "tests.*.conftest",
+]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
 
 [tool.pydocstyle]
 ### Ignoring explanation

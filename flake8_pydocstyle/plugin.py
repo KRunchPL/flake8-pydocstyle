@@ -3,7 +3,7 @@ Contains a code for a plugin that runs pydocstyle for the flake8.
 """
 import ast
 import os
-from typing import Optional, Set, cast
+from typing import cast, Optional, Set
 
 from pydocstyle import check
 from pydocstyle.config import ConfigurationParser, IllegalConfiguration
@@ -18,7 +18,7 @@ PropertyDecoratorsType = Set[str]
 IgnoreSelfOnlyInitType = bool
 
 
-class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore
+class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore[misc]
     """
     Class overrides default pydocstyle parsing by ignoring cli options.
 

@@ -1,3 +1,14 @@
+0.2.4 - 2024-02-10
+===================
+
+Maintenance release.
+
+Updating dev dependencies.
+Using ruff and fixing its rules violations.
+Reorganizing linters, typing and tests configuration files.
+Removing version specific code for not supported Python versions.
+
+
 0.2.3 - 2023-11-01
 ===================
 

@@ -18,12 +18,10 @@ pydocstyle = "^6.3.0"
 
 [tool.poetry.group.dev.dependencies]
 darglint = "^1.8.1"
-flake8 = "^6.1.0"
-flake8-html = "^0.4.3"
-flake8-isort = "^6.1.0"
-flake8-todo = "^0.7"
-mypy = "^1.6.1"
-pytest = "^7.4.3"
+flake8 = "^7.0.0"
+ruff = "^0.2.1"
+mypy = "^1.8.0"
+pytest = "^8.0.0"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.12.0"
 munch = "^4.0.0"
@@ -36,100 +34,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.plugins."flake8.extension"]
 D = "flake8_pydocstyle:Flake8PydocstylePlugin"
 
-[tool.pytest.ini_options]
-testpaths = [
-    "tests",
-]
-addopts = """
---cov flake8_pydocstyle \
---cov-config=setup.cfg \
---cov-report html:coverage-report \
---cov-report term:skip-covered \
---cov-fail-under=99 \
---no-cov-on-fail \
--Werror -Wignore::ImportWarning \
---strict-markers \
-"""
 
-[tool.isort]
-virtual_env = ".venv"
-sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-lines_between_types = 0
-lines_between_sections = 1
-lines_after_imports = 2
-lines_before_imports = 0
-include_trailing_comma = true
-use_parentheses = true
-multi_line_output = 3
-line_length = 110
-force_grid_wrap = 0
-ensure_newline_before_comments = true
-combine_as_imports = true
-order_by_type = false
-
-[tool.mypy]
-files = "."
-# Categories below are based on mypy==1.6.1
-# Default values
-disallow_any_unimported = false
-disallow_any_expr = false
-disallow_any_decorated = false
-disallow_any_explicit = false
-implicit_optional = false
-strict_optional = true
-warn_no_return = true
-ignore_errors = false
-allow_untyped_globals = false
-allow_redefinition = false
-local_partial_types = false
-# Strict overwrites
-strict = true
-warn_unused_configs = true
-disallow_any_generics = true
-disallow_subclassing_any = true
-disallow_untyped_calls = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_return_any = true
-implicit_reexport = false
-strict_equality = true
-extra_checks = true
-# Additional overwrites
-warn_unreachable = true
-strict_concatenate = true
-
-[[tool.mypy.overrides]]
-module = [
-    "pydocstyle.*"
-]
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = [
-    "tests.*",
-]
-disallow_untyped_defs = false
-disallow_incomplete_defs = false
-
-[[tool.mypy.overrides]]
-module = [
-    "tests.*.conftest",
-]
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-
-[tool.pydocstyle]
-### Ignoring explanation
-# D104 - Missing docstring in public package
-# D107 - Missing docstring in __init__
-# D200 - One-line docstring should fit on one line with quotes
-# D203 - 1 blank line required before class docstring
-# D212 - Multi-line docstring summary should start at the first line
-ignore = """
-D104,D107,
-D200,D203,D212
-"""

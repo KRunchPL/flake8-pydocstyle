@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -10,12 +10,16 @@ from flake8_pydocstyle import Flake8PydocstylePlugin
 from flake8_pydocstyle.plugin import _ConfigurationParserIgnoringSysArgv
 
 
+def _resolve_file_name(filename: str) -> str:
+    return str(Path(filename).resolve())
+
+
 @pytest.fixture
 def mocked_check(mocker: MockerFixture) -> MagicMock:
     mocker.patch(
         'flake8_pydocstyle.plugin._files_options',
         {
-            os.path.abspath('checked_file'): (
+            _resolve_file_name('checked_file'): (
                 'codes',
                 'ignore_decorators',
                 'property_decorators',
@@ -28,7 +32,7 @@ def mocked_check(mocker: MockerFixture) -> MagicMock:
 
 def test_init_stores_filename():
     plugin = Flake8PydocstylePlugin(None, 'test_filename', ['test_lines'])  # type: ignore [arg-type]
-    assert plugin.filename == os.path.abspath('test_filename')
+    assert plugin.filename == _resolve_file_name('test_filename')
 
 
 def test_run_with_not_checked_file(mocked_check: MagicMock):
@@ -85,8 +89,8 @@ def test_get_files_options_return_absolute_paths(mocker: MockerFixture):
         ],
     )
     assert parser.get_files_options() == {
-        os.path.abspath('file_name_1'): ([], None, None, False),
-        os.path.abspath('file_name_2'): ([], None, None, False),
+        _resolve_file_name('file_name_1'): ([], None, None, False),
+        _resolve_file_name('file_name_2'): ([], None, None, False),
     }
 
 
@@ -101,8 +105,8 @@ def test_get_files_options_return_correct_options(mocker: MockerFixture):
         ],
     )
     assert parser.get_files_options() == {  # type: ignore[comparison-overlap]
-        os.path.abspath('file_name_1'): (['option_1'], ['decorators_1'], {'properties_1'}, False),
-        os.path.abspath('file_name_2'): (['option_2'], ['decorators_2'], {'properties_2'}, True),
+        _resolve_file_name('file_name_1'): (['option_1'], ['decorators_1'], {'properties_1'}, False),
+        _resolve_file_name('file_name_2'): (['option_2'], ['decorators_2'], {'properties_2'}, True),
     }
 
 
@@ -115,5 +119,5 @@ def test_get_files_options_raises_on_too_many_options(mocker: MockerFixture):
             ('file_name_1', ['option_1'], ['decorators_1'], {'properties_1'}, False, 'TOO_MUCH'),
         ],
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='changes in pydocstyle'):
         parser.get_files_options()

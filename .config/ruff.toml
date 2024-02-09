@@ -445,6 +445,8 @@ ignore = [
     "TCH002",  # [*] Move third-party import into a type-checking block
     "TCH003",  # [*] Move standard library import into a type-checking block
     "PYI041",  # Use `float` instead of `int | float`
+    "N812",    # Lowercase `<class>` imported as non-lowercase `<class>`
+    "FA100",   # Missing `from __future__ import annotations`, but uses `typing.Optional`
 ]
 # Avoid automatically removing unused imports in __init__.py files. Such
 # imports will still be flagged, but with a dedicated message suggesting

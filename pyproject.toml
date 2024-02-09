@@ -33,5 +33,3 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.plugins."flake8.extension"]
 D = "flake8_pydocstyle:Flake8PydocstylePlugin"
-
-

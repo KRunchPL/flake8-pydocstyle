@@ -36,7 +36,7 @@ class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore[
         self._arguments = self._arguments or ['.']
 
         if not self._validate_options(self._options):
-            raise IllegalConfiguration()
+            raise IllegalConfiguration
 
         self._run_conf = self._create_run_config(self._options)
 
@@ -58,11 +58,12 @@ class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore[
         files_options = {}
         for filename, *options in self.get_files_to_check():
             if len(options) != 4:
-                raise ValueError(
+                msg = (
                     f'`ConfigurationParser.get_files_to_check` yielded {len(options)} for file "{filename}". '
                     f'Expected number of options is: 4. It might be a result of changes in pydocstyle. '
                     f'Try downgrading pydocstyle and report an issue in flake8-pydocstyle repo.'
                 )
+                raise ValueError(msg)
             files_options[str(os.path.abspath(filename))] = (
                 cast(CheckCodesType, options[0]),
                 cast(Optional[IgnoreDecoratorsType], options[1]),

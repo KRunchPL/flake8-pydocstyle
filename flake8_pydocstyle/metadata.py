@@ -1,15 +1,10 @@
 """
 Defines package metadata.
 """
-import sys
+
+import importlib.metadata as importlib_metadata
 
 from flake8_pydocstyle.generic_types import Tuple
-
-
-if sys.version_info >= (3, 8):  # pragma: no cover (PY38+)
-    import importlib.metadata as importlib_metadata
-else:  # pragma: no cover (<PY38)
-    import importlib_metadata
 
 
 def _get_versions() -> Tuple[str, str]:

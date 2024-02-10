@@ -1,0 +1,12 @@
+[flake8]
+extend-exclude = .*/
+
+### Rules choice
+# DAR: We use flake8 just to run darglint, ruff takes care about the rest
+select=DAR
+# DAR401: The docstring is missing an exception raised
+ignore=DAR401
+
+### Darglint options
+docstring_style = sphinx
+strictness = full

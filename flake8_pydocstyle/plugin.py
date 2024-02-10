@@ -2,7 +2,7 @@
 Contains a code for a plugin that runs pydocstyle for the flake8.
 """
 import ast
-import os
+from pathlib import Path
 from typing import cast, Optional, Set
 
 from pydocstyle import check
@@ -16,6 +16,10 @@ CheckCodesType = List[str]
 IgnoreDecoratorsType = List[Pattern[str]]
 PropertyDecoratorsType = Set[str]
 IgnoreSelfOnlyInitType = bool
+
+
+def _resolve_file_name(filename: str) -> str:
+    return str(Path(filename).resolve())
 
 
 class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore[misc]
@@ -36,7 +40,7 @@ class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore[
         self._arguments = self._arguments or ['.']
 
         if not self._validate_options(self._options):
-            raise IllegalConfiguration()
+            raise IllegalConfiguration
 
         self._run_conf = self._create_run_config(self._options)
 
@@ -57,13 +61,14 @@ class _ConfigurationParserIgnoringSysArgv(ConfigurationParser):  # type: ignore[
         self.parse()
         files_options = {}
         for filename, *options in self.get_files_to_check():
-            if len(options) != 4:
-                raise ValueError(
+            if len(options) != 4:  # noqa: PLR2004 (explained in error message)
+                msg = (
                     f'`ConfigurationParser.get_files_to_check` yielded {len(options)} for file "{filename}". '
                     f'Expected number of options is: 4. It might be a result of changes in pydocstyle. '
                     f'Try downgrading pydocstyle and report an issue in flake8-pydocstyle repo.'
                 )
-            files_options[str(os.path.abspath(filename))] = (
+                raise ValueError(msg)
+            files_options[_resolve_file_name(filename)] = (
                 cast(CheckCodesType, options[0]),
                 cast(Optional[IgnoreDecoratorsType], options[1]),
                 cast(Optional[PropertyDecoratorsType], options[2]),
@@ -87,7 +92,9 @@ class Flake8PydocstylePlugin:
     version = f'{version}, pydocstyle: {pydocstyle_version}'
 
     def __init__(self, tree: ast.Module, filename: str, lines: List[str]) -> None:
-        self.filename = os.path.abspath(filename)
+        _ = tree
+        _ = lines
+        self.filename = _resolve_file_name(filename)
 
     def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
         """

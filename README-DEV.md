@@ -1,6 +1,6 @@
 # Developer information
 
-This file contains developer information for the repository.
+This file contains the most important developer information for the repository.
 
 ## Python
 
@@ -13,7 +13,7 @@ Python part of the code shall follow those base guidelines:
 
 ### Library dependencies
 
-Project is using [Poetry](https://python-poetry.org/) to manage dependencies and building package.
+Project is using [Poetry](https://python-poetry.org/) to manage dependencies and building packages.
 
 To install Poetry on your system follow the guide here: [Poetry Installation](https://python-poetry.org/docs/#installation)
 
@@ -26,7 +26,7 @@ poetry config virtualenvs.in-project true
 To create a venv and install all dependencies:
 
 ```console
-poetry install
+poetry install --no-root --sync
 ```
 
 To add a production dependency:
@@ -55,7 +55,7 @@ To run all the unit tests use the `pytest` command without any parameters in the
 
 Results will be written to standard output. Coverage can be found in the `.coverage` file and the HTML version of the report will be put in the `coverage-report` directory.
 
-Pytest configuration is in the `pyproject.toml` file.
+Pytest configuration is in the `pytest.ini` file. Coverage report configuration is in the `.coveragerc` file.
 
 ### Static code checkers
 
@@ -63,19 +63,15 @@ Static checkers are being run on the repository by the PR checker, and therefore
 
 #### Linter
 
-`flake8` with the following plugins:
+`ruff` is the linter of choice for this repository. Additionally, `darglint` is used to check docstrings content (arguments, returns, etc.). As `darglint` has limited configuration capabilities when it comes to choosing linted files, `flake8` is used as `darglint`'s wrapper.
 
-* `flake8-isort` - checks imports order grouping;
-* `darglint` - checks content of docstrings (arguments, returns, etc.);
-* `flake8-pydocstyle` - checks presence of docstrings in required places.
+To lint all python code use the `ruff .` and `flake8` commands in the main folder of the repo.
 
-To lint all python code use the `flake8` command without any parameters in the main folder of the repo.
+Full linting reports from both tools will be written to standard output.
 
-Full linting report in HTML form will be available in `flake8-report` directory. Summary will be written to standard output.
+`flake8` and `darglint` configuration is in the `.flake8` file.
 
-`flake8` and `darglint` configuration is in the `setup.cfg` file.
-
-`isort` and `pydocstyle` configuration is in the `pyproject.toml` file.
+`ruff` configuration is in the `ruff.toml` file.
 
 #### Docstrings checks
 
@@ -87,8 +83,16 @@ To check all python code use the `pydocstyle` command without any parameters in 
 
 #### Typing checks
 
-`mypy` is the plugin of choice for typing checks on this repo.
+`mypy` is the checker of choice for type checking on this repo.
 
 To check all python code use the `mypy` command without any parameters in the main folder of the repo.
 
-`mypy` configuration is in the `pyproject.toml` file.
+`mypy` configuration is in the `mypy.ini` file.
+
+#### Auto formatter
+
+`ruff` is the formatter of choice on this repo.
+
+To format the whole repo code use `ruff format .`. The PR checker is making sure that the whole code is formatted using this command.
+
+`ruff` configuration is in the `ruff.toml` file.

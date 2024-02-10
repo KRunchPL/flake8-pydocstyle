@@ -26,7 +26,11 @@ jobs:
     - name: Install package with dependencies
       run: poetry install
     - name: Linter
-      run: flake8
+      run: |
+        flake8
+        ruff check .
+        ruff format .
+        git diff-index --quiet HEAD -- || (echo "The following files must be ruff formatted:"; git diff --name-only; exit 1;)
     - name: Unit tests
       run: pytest
     - name: Docstrings checker

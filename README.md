@@ -6,6 +6,12 @@
 
 # flake8-pydocstyle
 
+The project is ARCHIVED, and it is no longer actively maintained.
+
+I have stopped using `pydocstyle` and substituted it with [`ruff`](https://github.com/astral-sh/ruff). Moreover [`pydocstyle`](https://github.com/PyCQA/pydocstyle/) project has been deprecated and is no longer actively maintained.
+
+## Description
+
 Plugin for [`flake8`](https://github.com/PyCQA/flake8) that runs [`pydocstyle`](https://github.com/PyCQA/pydocstyle/) while linting.
 
 It is running `pydocstyle` as it would be run without any parameters in the command line, so it respects all configuration file options that you can set for example in `pyproject.toml`.

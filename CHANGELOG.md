@@ -1,3 +1,11 @@
+0.2.5 - 2024-11-23
+===================
+
+Maintenance release.
+
+Cleanup of the README file before archiving the project.
+
+
 0.2.4 - 2024-02-10
 ===================
 
